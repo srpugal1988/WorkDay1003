@@ -169,19 +169,13 @@ public class AuthenticationController {
 		User user=LoginInfo.USERS_SESSIONS.get(globalId);
 		
 		
-		
 		boolean isLoggedIn=false;
 		boolean isPageAcessEligible=false;
 			
 		if(user!=null) {
 				
 				isPageAcessEligible=loginservice.checkForPageAccess(user.getRoleid(),Integer.parseInt(moduleindex));
-				
-				displayinfo.setClient(ServerDefs.CLIENT);
-				displayinfo.setVersion(ServerDefs.VERSION);
-				displayinfo.setDisplayname(user.getFullname());
-				displayinfo.setRolename(user.getRolename());
-				
+								
 				webfaceresponse.setCode("100");
 				webfaceresponse.setMessage("UserInformation Available!");
 				webfaceresponse.setPocket(displayinfo);
@@ -193,13 +187,9 @@ public class AuthenticationController {
 		}
 		
 		if(isLoggedIn==false) {
-			displayinfo.setClient("");
-			displayinfo.setVersion("");
-			displayinfo.setDisplayname("");
-			displayinfo.setRolename("");
 			
 			webfaceresponse.setCode("99");
-			webfaceresponse.setMessage("UserInformation Not Available!");
+			webfaceresponse.setMessage("User Information Not Available!");
 			webfaceresponse.setPocket(displayinfo);
 		}
 		

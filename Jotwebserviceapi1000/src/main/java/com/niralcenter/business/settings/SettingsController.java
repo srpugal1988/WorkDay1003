@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.niralcenter.business.model.Role;
 import com.niralcenter.business.model.RoleRightsDetails;
+import com.niralcenter.business.model.SessionInformation;
 import com.niralcenter.business.model.User;
 import com.niralcenter.business.model.WSresponse;
 import com.niralcenter.business.validations.UserValidator;
@@ -36,6 +37,10 @@ public class SettingsController {
 	
 	@Autowired
 	RolesService roleservice;
+	
+	
+	@Autowired
+	BrowserSessionService browserSessionService;
 	
 	
 	@Autowired
@@ -154,15 +159,29 @@ public class SettingsController {
 	@RequestMapping(value="/role/store",method=RequestMethod.POST)
 	@ResponseBody
 	public WSresponse StoreRolesInformation(@RequestBody Role role) {
-		System.out.println("Reached StoreRolesInformation------------------------->");
-		
-		
+
 		int count=roleservice.StoreRolesInformation(role);
 		
 		
 		webfaceresponse.setCode("100");
 		webfaceresponse.setMessage("Role added successfully!");
 		webfaceresponse.setPocket(role);
+		
+		return webfaceresponse;
+	}
+	
+	
+	@RequestMapping(value="/browser/sessions/fetchall",method=RequestMethod.GET)
+	@ResponseBody
+	public WSresponse fetchGlobalSessionInformation() {
+		
+		
+		List<SessionInformation> globalSessionUsersList=browserSessionService.fetchGlobalSessionInformation();
+		
+		
+		webfaceresponse.setCode("100");
+		webfaceresponse.setMessage("Data retrived successfully");
+		webfaceresponse.setPocket(globalSessionUsersList);
 		
 		return webfaceresponse;
 	}

@@ -111,7 +111,7 @@ public class RolesRepository {
     	//System.out.println("Query:"+query);
     	int rowCount=jdbcTemplate.update(query,new Object[] {rights,roleright.getId(),roleright.getRoleid()});
     	
-    	if(roleright.getLevel()==1) {
+    	if(roleright.getLevel()==1 || roleright.getLevel()==2) {
     		
     		 query="UPDATE sm_rolesrightdetails set rights=? where roleid=? and moduleid=?";
     		 rowCount=jdbcTemplate.update(query,new Object[] {rights,roleright.getRoleid(),roleright.getId()});

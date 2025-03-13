@@ -5,18 +5,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class SessionInformation {
 
-	String id;
 	String userId;
 	String fullname;
 	String sessionId;
 	String useragent;
+	String remoteHost;
+	String ipAddress;
 	
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
+	
 	public String getUserId() {
 		return userId;
 	}
@@ -41,6 +37,21 @@ public class SessionInformation {
 	public void setUseragent(String useragent) {
 		this.useragent = useragent;
 	}
+	public String getRemoteHost() {
+		return remoteHost;
+	}
+	public void setRemoteHost(String remoteHost) {
+		this.remoteHost = remoteHost;
+	}
+	public String getIpAddress() {
+		return ipAddress;
+	}
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+	
+	
+	
 	
 	
 }

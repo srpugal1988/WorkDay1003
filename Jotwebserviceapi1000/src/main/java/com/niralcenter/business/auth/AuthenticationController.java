@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,10 +62,11 @@ public class AuthenticationController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
-	public WSresponse proceedLoginCheck(HttpSession httpSession,@RequestBody User user1) {
+	public WSresponse proceedLoginCheck(HttpSession httpSession,HttpServletRequest httpServletRequest,@RequestBody User user1) {
 
 		//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		//String currentPrincipalName = authentication.getName();
+		
 		Map<String,Object> responseMap=new HashMap<String,Object>();
 		
 		String username=user1.getUsername();
@@ -72,9 +74,9 @@ public class AuthenticationController {
 		
 		
 		User user=loginservice.loginCheck(username,password);
-		
-		
-		//User user = loginservice.FetchUserInformation(usercredin.getUsername());
+		String userAgent=httpServletRequest.getHeader("User-Agent");
+		String ipAddress=httpServletRequest.getRemoteAddr();
+		String remoteHost=httpServletRequest.getRemoteHost();
 		
 		
 		if (user.getOnline()==1) {
@@ -86,6 +88,9 @@ public class AuthenticationController {
 			logger.info(
 					">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			user.setGlobalId(httpSession.getId());
+			user.setUseragent(userAgent);
+			user.setRemoteHost(remoteHost);
+			user.setIpAddress(ipAddress);
 			
 			
 			loginservice.UserLogForLogin(user);

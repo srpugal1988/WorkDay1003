@@ -41,11 +41,12 @@ public class BrowserSessionService {
 			
 			user=GlobalSessions.get(key);
 			
-			sessioninfo.setSessionId(key);
-			sessioninfo.setUseragent("Google Chrome");
-			sessioninfo.setId(user.getId()+"");
 			sessioninfo.setUserId(user.getUserrefno());
 			sessioninfo.setFullname(user.getFullname());
+			sessioninfo.setSessionId(key);
+			sessioninfo.setUseragent(user.getUseragent());
+			sessioninfo.setRemoteHost(user.getRemoteHost());
+			sessioninfo.setIpAddress(user.getIpAddress());
 			
 			globalSessionUsersList.add(sessioninfo);
 		}

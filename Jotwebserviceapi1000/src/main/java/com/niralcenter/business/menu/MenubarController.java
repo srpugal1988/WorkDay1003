@@ -158,6 +158,8 @@ public class MenubarController {
 		int roleid=0;
 	
 		User user=LoginInfo.USERS_SESSIONS.get(globalId);
+		
+		if(user!=null)
 		roleid=user.getRoleid();
 		
 		menulist=menubarService.loadMenuByrole(roleid);

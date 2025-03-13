@@ -6,7 +6,7 @@ import java.util.Date;
 import org.springframework.stereotype.Component;
 
 @Component
-public class User implements Serializable{
+public class User extends SessionInformation implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -56,7 +56,7 @@ public class User implements Serializable{
 		this.globalId = globalId;
 	}
 
-	
+
 	public int getId() {
 		return id;
 	}
@@ -216,6 +216,9 @@ public class User implements Serializable{
 		this.globalId = globalId;
 	}
 
+
+	
+	
     
 	
 

@@ -153,7 +153,7 @@ public class MenubarController {
 	
 	@RequestMapping(value = "/menu", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<WSresponse> loadMenu(HttpSession httpSession,HttpServletResponse httpServletResponse,@RequestParam("id") String globalId) {
+	public ResponseEntity<WSresponse> loadMenu(HttpSession httpSession,HttpServletResponse httpServletResponse,@RequestParam("globalId") String globalId) {
 		List<Menu> menulist=null;
 		int roleid=0;
 	

@@ -32,6 +32,7 @@ import com.niralcenter.business.menu.MenubarService;
 import com.niralcenter.business.model.Displayinfo;
 import com.niralcenter.business.model.User;
 import com.niralcenter.business.model.WSresponse;
+import com.niralcenter.business.security.jwt.JWTHelper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -58,6 +59,10 @@ public class AuthenticationController {
 	
 	@Autowired
 	Displayinfo displayinfo;
+	
+	
+	@Autowired
+	private JWTHelper jwthelper;
 	
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -97,6 +102,9 @@ public class AuthenticationController {
 
 			
 			LoginInfo.user=user;
+
+			
+			String token = jwthelper.generateToken(user);
 			
 			
 			displayinfo.setClient(ServerDefs.CLIENT);
@@ -113,6 +121,7 @@ public class AuthenticationController {
 			
 			responseMap.put("UserInfo",user);
 			responseMap.put("DisplayInfo",displayinfo);
+			responseMap.put("jwttoken",token);
 			
 			
 			webfaceresponse.setCode("100");
@@ -133,7 +142,8 @@ public class AuthenticationController {
 	
 	
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-	public void proceedLogout(HttpSession  httpSession,HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse,@RequestParam("id") String globalId) throws IOException {
+	@ResponseBody
+	public WSresponse proceedLogout(HttpSession  httpSession,HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse,@RequestParam("globalId") String globalId) throws IOException {
 
 		Object user_session = httpSession.getAttribute(ServerDefs.SESSION_USER_LABEL);
 		User user = (User) user_session;
@@ -156,20 +166,27 @@ public class AuthenticationController {
 			
 			LoginInfo.USERS_SESSIONS.remove(globalId);
 			
+			webfaceresponse.setCode("100");
+			webfaceresponse.setMessage("USER LOGGED-OUT SUCCESSFULLY");
+			webfaceresponse.setPocket("");
 
 		} else {
 			logger.info("USER NOT LOGGED IN YET");
+			webfaceresponse.setCode("99");
+			webfaceresponse.setMessage("USER NOT-LOGGED IN YET");
+			webfaceresponse.setPocket("");
 		}
 
 		
-		httpServletResponse.sendRedirect(ClientDefs.CLIENT_URL+"/"+ModuleDefs.LOGIN);
+		return webfaceresponse;
+		//httpServletResponse.sendRedirect(ClientDefs.CLIENT_URL+"/"+ModuleDefs.LOGIN);
 	}
 	
 	
 	
 	@RequestMapping(value = "/checkLoginUser", method = RequestMethod.GET)
 	@ResponseBody
-	public WSresponse checkForPageAccess(HttpSession httpSession,HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse,@RequestParam("moduleindex") String moduleindex,@RequestParam("id") String globalId) throws IOException {
+	public WSresponse checkForPageAccess(HttpSession httpSession,HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse,@RequestParam("moduleindex") String moduleindex,@RequestParam("globalId") String globalId) throws IOException {
 
 		User user=LoginInfo.USERS_SESSIONS.get(globalId);
 		
@@ -205,6 +222,41 @@ public class AuthenticationController {
 		}
 		
 		
+		return webfaceresponse;
+	}
+	
+	
+	
+	@RequestMapping(value = "/jwtExpire")
+	@ResponseBody
+	public WSresponse jwtExpiredSupport(HttpSession  httpSession,HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse,@RequestParam("globalId") String globalId) {
+
+		
+		User user=LoginInfo.USERS_SESSIONS.get(globalId);
+		
+		if (user!=null) {
+					
+			httpSession.removeAttribute(ServerDefs.SESSION_USER_LABEL);
+			httpSession.invalidate();
+			loginservice.UserLogForLogout(user);
+			
+			LoginInfo.user=null;
+			
+			LoginInfo.USERS_SESSIONS.remove(globalId);
+			
+			webfaceresponse.setCode("97");
+			webfaceresponse.setMessage("YOUR JWT TOKEN VALIDATION FAILED, KINDLY LOGIN AGAIN...");
+			webfaceresponse.setPocket("");
+
+		} else {
+			logger.info("USER NOT LOGGED IN YET");
+			webfaceresponse.setCode("99");
+			webfaceresponse.setMessage("USER NOT-LOGGED IN YET");
+			webfaceresponse.setPocket("");
+		}
+		
+
+	
 		return webfaceresponse;
 	}
 	

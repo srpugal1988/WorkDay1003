@@ -33,15 +33,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         // Authorization=Bearer <token>
 
     	String hopeJwtParameter = request.getParameter("hopeJwt");
+    	String requestMethod=request.getMethod();
         String requestHeader =""; 
         String sessionId     ="";
         String username = null;
         String token = null;
         Boolean validateToken=false;
         
-        //System.out.println("hope---------------------------------------->"+request.getParameter("hopeJwt"));
         
-        if(hopeJwtParameter==null || hopeJwtParameter.equals("No")) {
+        if(hopeJwtParameter.equals("No") || requestMethod.equals("OPTIONS")) {
         	hopeJwtParameter="No";
         	validateToken=true;
         }
@@ -81,20 +81,18 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 		            }
 		        } else {
 		            logger.info("Invalid Header Value !! ");
-		            validateToken=true;
+		            validateToken=false;
 		        }
 			        
          }
         
         
-        if(validateToken) {
-        	  logger.info("====================JWT AUTHENTICATION SUCCESSFULL==========================");
-        }else {
+        if(validateToken==false) {
         	  logger.error("====================JWT AUTHENTICATION FAILURE=============================");
         	  request.getRequestDispatcher("/auth/jwtExpire").forward(request,response);
+        	  return;
         }
         
-        System.out.println("doFilter................");
         filterChain.doFilter(request, response);
         
     }

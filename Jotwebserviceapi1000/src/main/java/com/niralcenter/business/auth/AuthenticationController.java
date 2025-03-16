@@ -68,9 +68,7 @@ public class AuthenticationController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	@ResponseBody
 	public WSresponse proceedLoginCheck(HttpSession httpSession,HttpServletRequest httpServletRequest,@RequestBody User user1) {
-
-		//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		//String currentPrincipalName = authentication.getName();
+		logger.info("proceedLoginCheck method started");
 		
 		Map<String,Object> responseMap=new HashMap<String,Object>();
 		
@@ -92,6 +90,7 @@ public class AuthenticationController {
 			logger.info("SESSION:(" + httpSession.getId() + ") CREATED.");
 			logger.info(
 					">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			
 			user.setGlobalId(httpSession.getId());
 			user.setUseragent(userAgent);
 			user.setRemoteHost(remoteHost);
@@ -135,6 +134,7 @@ public class AuthenticationController {
 			webfaceresponse.setPocket(user);
 		}
 
+		logger.info("proceedLoginCheck method completed");
 		return webfaceresponse;
 	}
 
@@ -144,7 +144,9 @@ public class AuthenticationController {
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	@ResponseBody
 	public WSresponse proceedLogout(HttpSession  httpSession,HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse,@RequestParam("globalId") String globalId) throws IOException {
-
+		logger.info("proceedLogout method started");
+		
+		
 		Object user_session = httpSession.getAttribute(ServerDefs.SESSION_USER_LABEL);
 		User user = (User) user_session;
 		
@@ -178,50 +180,57 @@ public class AuthenticationController {
 		}
 
 		
+		logger.info("proceedLogout method completed");
 		return webfaceresponse;
-		//httpServletResponse.sendRedirect(ClientDefs.CLIENT_URL+"/"+ModuleDefs.LOGIN);
 	}
 	
 	
 	
-	@RequestMapping(value = "/checkLoginUser", method = RequestMethod.GET)
+	@RequestMapping(value = "/checkForPageAccess", method = RequestMethod.GET)
 	@ResponseBody
 	public WSresponse checkForPageAccess(HttpSession httpSession,HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse,@RequestParam("moduleindex") String moduleindex,@RequestParam("globalId") String globalId) throws IOException {
-
+		logger.info("checkForPageAccess method started");
+		
+		
+		boolean isLoggedIn=true;
+		boolean isPageAcessEligible=false;
+		
+		
 		User user=LoginInfo.USERS_SESSIONS.get(globalId);
 		
-		
-		boolean isLoggedIn=false;
-		boolean isPageAcessEligible=false;
+	
 			
 		if(user!=null) {
-				
-				isPageAcessEligible=loginservice.checkForPageAccess(user.getRoleid(),Integer.parseInt(moduleindex));
-								
-				webfaceresponse.setCode("100");
-				webfaceresponse.setMessage("UserInformation Available!");
-				webfaceresponse.setPocket(displayinfo);
-				
-				isLoggedIn=true;
-	
-		}else {
+			isPageAcessEligible=loginservice.checkForPageAccess(user.getRoleid(),Integer.parseInt(moduleindex));
+		}
+		else {
 			isLoggedIn=false;
 		}
 		
+		
 		if(isLoggedIn==false) {
-			
-			webfaceresponse.setCode("99");
-			webfaceresponse.setMessage("User Information Not Available!");
-			webfaceresponse.setPocket(displayinfo);
-		}
-		
-		if(isPageAcessEligible==false) {
 			webfaceresponse.setCode("98");
-			webfaceresponse.setMessage("You are not having access to this page");
-			webfaceresponse.setPocket(displayinfo);
+			webfaceresponse.setMessage("LOG-IN INFORMATION NOT FOUND, KINDLY LOGIN");
+			webfaceresponse.setPocket("");
+		}
+		else if(isPageAcessEligible==false) {
+			webfaceresponse.setCode("97");
+			webfaceresponse.setMessage("YOU DONT HAVE PERMISSION TO ACCESS THIS PAGE");
+			webfaceresponse.setPocket("");
+		}
+		else if(isPageAcessEligible==true) {
+			webfaceresponse.setCode("100");
+			webfaceresponse.setMessage("YOU HAVE ACCESS TO THIS PAGE");
+			webfaceresponse.setPocket("");
+		}
+		else {
+			webfaceresponse.setCode("99");
+			webfaceresponse.setMessage("SOME PROBLEM FOUND ON SERVER SIDE");
+			webfaceresponse.setPocket("");
 		}
 		
 		
+		logger.info("checkForPageAccess method completed");
 		return webfaceresponse;
 	}
 	
@@ -230,7 +239,7 @@ public class AuthenticationController {
 	@RequestMapping(value = "/jwtExpire")
 	@ResponseBody
 	public WSresponse jwtExpiredSupport(HttpSession  httpSession,HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse,@RequestParam("globalId") String globalId) {
-
+		logger.info("jwtExpiredSupport method started");
 		
 		User user=LoginInfo.USERS_SESSIONS.get(globalId);
 		
@@ -244,19 +253,19 @@ public class AuthenticationController {
 			
 			LoginInfo.USERS_SESSIONS.remove(globalId);
 			
-			webfaceresponse.setCode("97");
+			webfaceresponse.setCode("96");
 			webfaceresponse.setMessage("YOUR JWT TOKEN VALIDATION FAILED, KINDLY LOGIN AGAIN...");
 			webfaceresponse.setPocket("");
 
+			
 		} else {
-			logger.info("USER NOT LOGGED IN YET");
-			webfaceresponse.setCode("99");
-			webfaceresponse.setMessage("USER NOT-LOGGED IN YET");
+			webfaceresponse.setCode("98");
+			webfaceresponse.setMessage("LOG-IN INFORMATION NOT FOUND, KINDLY LOGIN");
 			webfaceresponse.setPocket("");
 		}
 		
 
-	
+		logger.info("jwtExpiredSupport method completed");
 		return webfaceresponse;
 	}
 	

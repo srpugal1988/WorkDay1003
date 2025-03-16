@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.niralcenter.business.auth.AuthenticationController;
+import com.niralcenter.business.auth.AuthenticationService;
+import com.niralcenter.business.common.LoginInfo;
+import com.niralcenter.business.common.ServerDefs;
 import com.niralcenter.business.model.Role;
 import com.niralcenter.business.model.RoleRightsDetails;
 import com.niralcenter.business.model.SessionInformation;
@@ -20,12 +26,19 @@ import com.niralcenter.business.model.User;
 import com.niralcenter.business.model.WSresponse;
 import com.niralcenter.business.validations.UserValidator;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 
 
 @Controller
 @RequestMapping("/settingsctrl")
 public class SettingsController {
 
+	
+	private static final Logger logger = LogManager.getLogger(SettingsController.class);
+	
 	
 	@Autowired
 	WSresponse webfaceresponse;
@@ -45,6 +58,10 @@ public class SettingsController {
 	
 	@Autowired
 	UserValidator uservalidator;
+	
+	
+	@Autowired
+	AuthenticationService loginservice;
 	
 	
 	@RequestMapping(value="/user/store",method=RequestMethod.POST)
@@ -183,6 +200,39 @@ public class SettingsController {
 		webfaceresponse.setMessage("Data retrived successfully");
 		webfaceresponse.setPocket(globalSessionUsersList);
 		
+		return webfaceresponse;
+	}
+	
+	
+	@RequestMapping(value="/browser/sessions/kill",method=RequestMethod.GET)
+	@ResponseBody
+	public WSresponse KillParticularSession(HttpSession  httpSession,HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse,@RequestParam("globalId") String globalId,@RequestParam("killerId") String killerId) {
+
+		User user=LoginInfo.USERS_SESSIONS.get(killerId);
+		
+		if (user!=null) {
+					
+			httpSession.removeAttribute(ServerDefs.SESSION_USER_LABEL);
+			httpSession.invalidate();
+			loginservice.UserLogForLogout(user);
+			
+			LoginInfo.user=null;
+			
+			LoginInfo.USERS_SESSIONS.remove(killerId);
+			
+			webfaceresponse.setCode("100");
+			webfaceresponse.setMessage("SELECTED SESSION HAS BEEN CANCELED");
+			webfaceresponse.setPocket("");
+
+		} else {
+			logger.info("USER NOT LOGGED IN YET");
+			webfaceresponse.setCode("99");
+			webfaceresponse.setMessage("USER NOT-LOGGED IN YET");
+			webfaceresponse.setPocket("");
+		}
+		
+
+	
 		return webfaceresponse;
 	}
 	

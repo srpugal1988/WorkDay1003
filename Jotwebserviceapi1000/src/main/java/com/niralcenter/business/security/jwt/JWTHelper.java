@@ -21,10 +21,6 @@ import java.util.function.Function;
 @Component
 public class JWTHelper {
 	
-    //requirement :
-   // public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-    //    public static final long JWT_TOKEN_VALIDITY =  60;
-    //private String secret = "afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf";
 
 	
     @Value("${client.app.jwtSecret}")
@@ -33,6 +29,7 @@ public class JWTHelper {
     
     @Value("${client.app.jwtExpirationMs}")
     private long jwtExpirationMs;
+    
     
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -65,6 +62,12 @@ public class JWTHelper {
     //generate token for user
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
+        
+        claims.put("firstname",user.getFirstname());
+        claims.put("lastname", user.getLastname());
+        claims.put("email", user.getEmail());
+        claims.put("role", user.getRolename());
+        
         return doGenerateToken(claims, user.getUsername());
     }
 

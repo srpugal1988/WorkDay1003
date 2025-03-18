@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.niralcenter.business.model.Business;
 import com.niralcenter.business.model.User;
-import com.niralcenter.business.model.WSresponse;
+import com.niralcenter.business.response.WSresponse;
 
 
 

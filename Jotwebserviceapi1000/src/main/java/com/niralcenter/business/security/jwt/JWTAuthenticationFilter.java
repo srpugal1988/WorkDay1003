@@ -52,7 +52,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         	    requestHeader=request.getHeader("Authorization");
         	    sessionId=request.getParameter("globalId");
         	    
-        	    logger.info(" Header :  {}", requestHeader);
+        	    //logger.info(" Header :  {}", requestHeader);
         	
 		        if (requestHeader != null && requestHeader.startsWith("Bearer")) {
 		            //looking good

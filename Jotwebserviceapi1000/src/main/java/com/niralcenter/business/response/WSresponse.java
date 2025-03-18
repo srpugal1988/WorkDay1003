@@ -1,4 +1,4 @@
-package com.niralcenter.business.model;
+package com.niralcenter.business.response;
 
 import org.springframework.stereotype.Component;
 

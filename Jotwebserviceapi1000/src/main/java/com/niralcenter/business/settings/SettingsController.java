@@ -23,7 +23,7 @@ import com.niralcenter.business.model.Role;
 import com.niralcenter.business.model.RoleRightsDetails;
 import com.niralcenter.business.model.SessionInformation;
 import com.niralcenter.business.model.User;
-import com.niralcenter.business.model.WSresponse;
+import com.niralcenter.business.response.WSresponse;
 import com.niralcenter.business.validations.UserValidator;
 
 import jakarta.servlet.http.HttpServletRequest;

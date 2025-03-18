@@ -24,8 +24,7 @@ import com.niralcenter.business.common.ServerDefs;
 import com.niralcenter.business.model.Displayinfo;
 import com.niralcenter.business.model.Menu;
 import com.niralcenter.business.model.User;
-import com.niralcenter.business.model.WSresponse;
-
+import com.niralcenter.business.response.WSresponse;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;

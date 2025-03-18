@@ -31,7 +31,7 @@ import com.niralcenter.business.common.ServerDefs;
 import com.niralcenter.business.menu.MenubarService;
 import com.niralcenter.business.model.Displayinfo;
 import com.niralcenter.business.model.User;
-import com.niralcenter.business.model.WSresponse;
+import com.niralcenter.business.response.WSresponse;
 import com.niralcenter.business.security.jwt.JWTHelper;
 
 import jakarta.servlet.http.HttpServletRequest;
